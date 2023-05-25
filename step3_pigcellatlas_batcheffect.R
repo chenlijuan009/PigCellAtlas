@@ -107,51 +107,7 @@ dr_scanorama <- dr_scanorama[colnames(mg),]
 mg[['scanorama']] <- CreateDimReducObject(dr_scanorama, key="SCANORAMA_")
 saveRDS(mg, "seurat_scanorma.rds")
 
-mg <- FindNeighbors(mg, reduction='scanorama', dims = 1:pcs)
-res.num <- seq(0.1,1.5,by=0.2)
-plot_list_umap <- list()
-plot_sample_umap <- list()
-#*** iteration  UMAP
-pdf("umapplot.pdf",width = 25,height = 13)
-for (i in res.num)
-                 {
-                  mg <- FindClusters(mg, resolution = i)
-                  mg <- RunUMAP(object=mg, reduction='scanorama',dims = 1:pcs) 
-                  plot_list_umap[[i]] <- DimPlot(mg, reduction = "umap",label=T,pt.size = .2)
-                  plot_sample_umap[[i]] <- DimPlot(mg, reduction = "umap",group.by = "sample", pt.size = .2)
-                  print(plot_list_umap[[i]]+plot_sample_umap[[i]])
-                 }
-dev.off()
-#*** iteration  tSNE
-plot_list_tsne <-list()
-plot_sample_tsne <-list()
-pdf("tsneplot.pdf",width = 25,height = 13)
-for (i in res.num)
-                  {
-                   mg<- FindClusters(mg, resolution = i)
-                   mg <- RunTSNE(mg, reduction='scanorama', dims = 1:pcs) 
-                   plot_list_tsne[[i]] <- DimPlot(mg, reduction = "tsne", label = TRUE, pt.size = .1)
-                   plot_sample_tsne[[i]] <- DimPlot(mg, reduction = "tsne", group.by = "sample", pt.size = .1)
-                   print(plot_list_tsne[[i]]+plot_sample_tsne[[i]])
-                  }
-dev.off()
-saveRDS(mg, 'mg_scanorama_umap_tsne.rds')
-#*** Find markers
-Markers <- FindAllMarkers(mg, min.pct = 0.25, logfc.threshold = 0.25)
-write.table(Markers,file="findallmarkers.xls",sep="\t")
-saveRDS(Markers , 'findallmarkers_table.RDS')
 
-options(repr.plot.height = 4, repr.plot.width = 6)
-p3<-DimPlot(mg, reduction = "umap", group.by = "sample", pt.size = .01, split.by = 'sample')
-ggsave("umap_split_sample.pdf", plot = p3, width = 30, height = 13,units = "cm") 
-p4<-DimPlot(mg, reduction = "umap", group.by = "sample", pt.size = .01)
-p5<-DimPlot(mg, reduction = "umap", label = TRUE, pt.size = .01)
-ggsave("umap_sample_plot.pdf", plot = p4+p5, width = 30, height = 15,units = "cm") 
-p6<-DimPlot(mg, reduction = "tsne", group.by = "sample", pt.size = .01)
-p7<-DimPlot(mg, reduction = "tsne", label = TRUE, pt.size = .01)
-ggsave("tsne_sample_plot.pdf", plot = p6+p7, width = 30, height = 15,units = "cm") 
-p8<-DimPlot(mg, reduction = "tsne", group.by = "sample", pt.size = .1, split.by = 'sample')
-ggsave("tsne_split_sample_plot.pdf", plot = p8, width = 30, height = 13,units = "cm") 
 
 
 
