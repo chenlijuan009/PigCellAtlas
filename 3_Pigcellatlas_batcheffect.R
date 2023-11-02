@@ -5,45 +5,26 @@ library(tidyverse)
 
 use_miniconda("/.local/share/r-miniconda/bin/python")
 scanorama <- import("scanorama")
+listRDS <- dir(pattern = "*.rds") 
+print(length(listRDS))
 
-Adipose <- readRDS("Adipose_decont_filter_singlet.so.rds")
-Cerebellum <- readRDS("Cerebellum_decont_filter_singlet.so.rds")
-Cerebrum <- readRDS("Cerebrum_decont_filter_singlet.so.rds")
-Colon <- readRDS("Colon_decont_filter_singlet.so.rds")
-Duodenum <- readRDS("Duodenum_decont_filter_singlet.so.rds")
-Heart <- readRDS("Heart_decont_filter_singlet.so.rds")
-Hypothalamus <- readRDS("Hypothalamus_decont_filter_singlet.so.rds")
-Ileum <- readRDS("Ileum_decont_filter_singlet.so.rds")
-Jejunum <- readRDS("Jejunum_decont_filter_singlet.so.rds")
-Kidney <- readRDS("Kidney_decont_filter_singlet.so.rds")
-Liver <- readRDS("Liver_decont_filter_singlet.so.rds")
-Lymph <- readRDS("Lymph_decont_filter_singlet.so.rds")
-Muscle <- readRDS("Muscle_decont_filter_singlet.so.rds")
-Ovary <- readRDS("Ovary_decont_filter_singlet.so.rds")
-Pancreas <- readRDS("Pancreas_decont_filter_singlet.so.rds")
-Pituitary <- readRDS("Pituitary_decont_filter_singlet.so.rds")
-Spleen <- readRDS("Spleen_decont_filter_singlet.so.rds")
-Testis <- readRDS("Testis_decont_filter_singlet.so.rds")
-Uterus <- readRDS("Uterus_decont_filter_singlet.so.rds")
+object_list <- lapply(X = listRDS, FUN = function(x) { x <- readRDS(x) })
 
-mg<-merge(Adipose,y=c(Cerebellum,Cerebrum,Colon,Duodenum,Heart,Hypothalamus,Ileum,Jejunum,
-                      Kidney,Liver,Lymph,Muscle,Ovary,Pancreas,Pituitary,Spleen,Testis,Uterus),
+
+mg <- merge(object_list[[1]], y = object_list[2:length(object_list)],
           add.cell.ids=c("Adipose","Cerebellum","Cerebrum","Colon","Duodenum","Heart","Hypothalamus",
                          "Ileum","Jejunum","Kidney","Liver","Lymph","Muscle","Ovary","Pancreas",
                          "Pituitary","Spleen","Testis","Uterus")
           )
 
-sample <- data.frame(sample=c(rep("Adipose",ncol(Adipose)),rep("Cerebellum",ncol(Cerebellum)),
-                              rep("Cerebrum",ncol(Cerebrum)),rep("Colon",ncol(Colon)),
-                              rep("Duodenum",ncol(Duodenum)),rep("Heart",ncol(Heart)),
-                              rep("Hypothalamus",ncol(Hypothalamus)),rep("Ileum",ncol(Ileum)),
-                              rep("Jejunum",ncol(Jejunum)),rep("Kidney",ncol(Kidney)),
-                              rep("Liver",ncol(Liver)),rep("Lymph",ncol(Lymph)),
-                              rep("Muscle",ncol(Muscle)),rep("Ovary",ncol(Ovary)),
-                              rep("Pancreas",ncol(Pancreas)),rep("Pituitary",ncol(Pituitary)),
-                              rep("Spleen",ncol(Spleen)),rep("Testis",ncol(Testis)),
-                              rep("Uterus",ncol(Uterus))
-                              ))
+sample <- data.frame(sample =c(rep('Adipose',ncol(object_list[[1]])),rep('Cerebellum',ncol(object_list[[2]])),rep('Cerebrum',ncol(object_list[[3]])),
+                               rep('Colon',ncol(object_list[[4]])),rep('Duodenum',ncol(object_list[[5]])),rep('Heart',ncol(object_list[[6]])),
+                               rep('Hypothalamus',ncol(object_list[[7]])),rep('Ileum',ncol(object_list[[8]])),rep('Jejunum',ncol(object_list[[9]])),
+                               rep('Kidney',ncol(object_list[[10]])),rep('Liver',ncol(object_list[[11]])),rep('Lymph',ncol(object_list[[12]])),
+                               rep('Muscle',ncol(object_list[[13]])),rep('Ovary',ncol(object_list[[14]])),
+                               rep('Pancreas',ncol(object_list[[15]])),rep('Pituitary',ncol(object_list[[16]])),
+                               rep('Spleen',ncol(object_list[[17]])),rep('Testis',ncol(object_list[[18]])),rep('Uterus',ncol(object_list[[19]]))))
+
 table(sample)
 rownames(sample) <- row.names(mg@meta.data)
 mg<- AddMetaData(mg, sample)
@@ -66,7 +47,7 @@ mg <- subset(mg, subset = nFeature_RNA > minGene &
                           nCount_RNA<maxCount & 
                           percent.mt < pctMT
              )
-mg <- NormalizeData(mg) %>% 
+mg <- mg %>% NormalizeData() %>% 
       FindVariableFeatures(nfeatures = 3000) %>%
       ScaleData() %>%
       RunPCA(npcs = 50, verbose=F) 

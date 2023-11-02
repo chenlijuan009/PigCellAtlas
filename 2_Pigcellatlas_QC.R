@@ -1,3 +1,4 @@
+
 library(magrittr)
 library(Seurat)
 library(celda)
@@ -34,9 +35,10 @@ pcs
 plot_df <- data.frame(pct = pct, cumu = cumu, rank = 1:length(pct))
 png("select_pca_value_elbow.png", width=9, height=6, res=300, units='in')
 ggplot(plot_df, aes(cumu, pct, label = rank, color = rank > pcs)) + 
-  geom_text() + geom_vline(xintercept = 90, color = "grey") +
-  geom_hline(yintercept = min(pct[pct > 5]), color = "grey") +
-  theme_bw()
+       geom_text() + 
+       geom_vline(xintercept = 90, color = "grey") +
+       geom_hline(yintercept = min(pct[pct > 5]), color = "grey") +
+       theme_bw()
 dev.off()
 #***UMAP
 Adipose_obj_scal <- RunUMAP(Adipose_obj_scal, dims = 1:pcs)
@@ -57,42 +59,5 @@ nExp_poi.adj <- round(nExp_poi*(1-homotypic.prop))
 Adipose_doubletfinder_obj <- doubletFinder_v3(Adipose_doublet_obj, PCs = 1:pcs, pN = 0.25, pK = pK_bcmvn, nExp = nExp_poi.adj, reuse.pANN = paste0('pANN_0.25_',pK_bcmvn,'_',nExp_poi.adj), sct = F)
 Adipose_decont_filter_singlet <- subset(Adipose_doubletfinder_obj, cells= rownames(Adipose_doubletfinder_obj@meta.data[Adipose_doubletfinder_obj@meta.data[[7]]=='Singlet',]))
 saveRDS(Adipose_decont_filter_singlet, 'Adipose_decont_filter_singlet.so.rds')
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 

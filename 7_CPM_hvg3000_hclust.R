@@ -4,7 +4,8 @@ library(tidyverse)
 
 
 mg <- readRDS('merge_PigCellAtlas.RDS')
-#*** select hvg 3000
+#------------------------------------------------------------------------------------------------------------
+#***Part1 select hvg 3000
 hvgs_mat <- mg@assays$RNA@data[VariableFeatures(mg),]
 write.table(row.names(hvgs_mat),file="hvgs_mat.txt",row.names=F,col.names=F,quote=F)
 #*** CPM value
@@ -21,7 +22,8 @@ log2_seuratCPM_hvgs_t_cluster <- aggregate(log2_seuratCPM_hvgs_t, by=list(mg@met
 log2_seuratCPM_hvgs_t_cluster_t <- t(log2_seuratCPM_hvgs_t_cluster)
 write.table(log2_seuratCPM_hvgs_t_cluster_t,file="log2_seuratCPM_hvgs3000.txt",sep="\t",quote=F,col.names = F)
 
-#*** hclust
+#------------------------------------------------------------------------------------------------------------
+#***Part2 hclust
 input<-read.table("log2_seuratCPM_hvgs3000.txt",sep="\t",header = T,row.names = 1)
 input_t <- as.matrix(t(input))
 hclust_data <- hclust(dist(input_t),method="ward.D2")
