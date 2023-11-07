@@ -4,7 +4,7 @@ Cells are the functional intermediaries linking genotypes to phenotypes. However
 # Title:
 Construction of a multi-tissue cell atlas reveals cell-type-specific regulation of molecular and complex phenotypes in pigs
 
-# PigGTEx-Pipeline-v0
+# PigGTEx-Pipeline
 https://github.com/FarmGTEx/PigGTEx-Pipeline-v0.git
 
 
